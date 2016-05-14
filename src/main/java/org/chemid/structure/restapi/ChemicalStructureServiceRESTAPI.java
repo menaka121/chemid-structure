@@ -29,6 +29,7 @@ import java.io.IOException;
  */
 @Path("/rest/structure")
 public class ChemicalStructureServiceRESTAPI {
+
     /**
      * This method returns the version number of the chemical structure service.
      *
