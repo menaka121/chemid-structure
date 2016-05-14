@@ -15,7 +15,6 @@ package org.chemid.structure.restapi;
 import org.chemid.structure.common.Constants;
 import org.chemid.structure.common.MoleculeMassMapper;
 import org.chemid.structure.dbclient.chemspider.ChemSpiderClient;
-import org.chemid.structure.common.Constants;
 import org.chemid.structure.dbclient.pubchem.PubChemClient;
 
 import javax.ws.rs.GET;
@@ -52,18 +51,21 @@ public class ChemicalStructureServiceRESTAPI {
                            @PathParam("error") Double error,
                            @PathParam("ppm") String ppm,
                            @PathParam("format") String format) throws IOException {
+
+        //TODO : Convert the error into ppm or ppb.
+        //TODO : Convert sdf to another file formats.
         ChemicalCalculator chemicalCalculator = new ChemicalCalculator();
         if (charge.toLowerCase().equals("p")) {
             mass = mass - MoleculeMassMapper.getInstance().getProperty("P." + adduct);
         } else if (charge.toLowerCase().equals("n")) {
             mass = mass + MoleculeMassMapper.getInstance().getProperty("N." + adduct);
         } else {
-
+            System.out.println("Molecule is considered to be Neutral!");
         }
 
         if (database.toLowerCase().contains("pubchem")) {
             System.out.println("PubChem Database");
-            String massRange = chemicalCalculator.getMassRange(mass,0.01);
+            String massRange = chemicalCalculator.getMassRange(mass, error);
             PubChemClient pubChemClient = new PubChemClient();
             String Url = pubChemClient.getDownloadURL(massRange);
             StringBuilder stringBuilder = pubChemClient.getSDFBuffer(Url);
