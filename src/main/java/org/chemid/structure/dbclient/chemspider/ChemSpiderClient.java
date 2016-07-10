@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
+/**
+ * ChemSpider client to download chemical structures from ChemSpider web services.
+ */
 public class ChemSpiderClient {
 
     private static ChemSpiderClient client;
@@ -60,6 +63,12 @@ public class ChemSpiderClient {
         return client;
     }
 
+    /**
+     * Get the status of the search
+     * @param rid : Transaction id
+     * @param token : Security token 
+     * @return
+     */
     public static String get_Search_GetAsyncSearchStatus_Results(String rid, String token) {
         String Output = null;
         try {
@@ -80,6 +89,13 @@ public class ChemSpiderClient {
         return Output;
     }
 
+    /**
+     * Query the ChemSpider Database by Mass and Error values.
+     * @param mass : Experimental mass value.
+     * @param error : Instrumentation error.
+     * @return The string containing the list of CSID values of resultant molecules.
+     * @throws RemoteException
+     */
     public String getChemicalStructuresByMass(Double mass, Double error) throws RemoteException {
         MassSpecAPIStub massSpecAPIStub = new MassSpecAPIStub();
         massSpecAPIStub._getServiceClient().getOptions().setProperty(HTTPConstants.CHUNKED, false);
@@ -112,6 +128,12 @@ public class ChemSpiderClient {
         return sdf;
     }
 
+    /**
+     * Query the database by CSIDs.
+     * @param _csids : CSID of a molecule
+     * @return : String containing the molecules in sdf format.
+     * @throws RemoteException
+     */
     public String getChemicalStructuresByCsids(int[] _csids) throws RemoteException {
         Vector<Integer> uniqueCsidArray = new Vector<Integer>();
         for (int _csid : _csids) {
@@ -162,6 +184,12 @@ public class ChemSpiderClient {
         return sdf;
     }
 
+    /**
+     * Download the molecules in sdf format.
+     * @param rid : Transaction id
+     * @param stub : MassSpecAPI instance.
+     * @return : String of all molecules in sdf format.
+     */
     protected String downloadCompressedSDF(String rid, MassSpecAPIStub stub) {
         TransactionConfiguration tc = new TransactionConfiguration();
         tc.setTransactionTimeout(Integer.MAX_VALUE);
@@ -216,6 +244,12 @@ public class ChemSpiderClient {
         return stringBuilder.toString();
     }
 
+    /**
+     * Read the sdf string and get the iAtomContainer object.
+     * @param sdfString : The String containing chemical structures in sdf format.
+     * @return : The list of structures as iAtomContainer objects.
+     * @throws CDKException
+     */
     protected Vector<IAtomContainer> getAtomContainerFromString(String sdfString) throws CDKException {
         MDLV2000Reader reader = new MDLV2000Reader(new StringReader(sdfString));
 
